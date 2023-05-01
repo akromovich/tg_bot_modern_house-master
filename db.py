@@ -24,3 +24,43 @@ class DataBase:
                 a= f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n '
                 g.append(a)
             return ''.join(g)
+
+    async def list_houses_a(self):
+        with self.connect:
+            res=self.cur.execute('SELECT block,n_house,status FROM `A-block`' ).fetchall()
+
+            g = []
+            for i in res:
+                a= f'{i[0]}-block    <b>{i[1]}</b>-honadon    status:{i[2]}\n'
+                g.append(a)
+            return ''.join(g)        
+    
+    async def list_houses_b(self):
+        with self.connect:
+            res=self.cur.execute('SELECT block,n_house,status FROM `Б-block`' ).fetchall()
+
+            g = []
+            for i in res:
+                a= f'{i[0]}-block    <b>{i[1]}</b>-honadon    status:{i[2]}\n'
+                g.append(a)
+            return ''.join(g)     
+
+    async def list_houses_v(self):
+        with self.connect:
+            res=self.cur.execute('SELECT block,n_house,status FROM `В-block`' ).fetchall()
+
+            g = []
+            for i in res:
+                a= f'{i[0]}-block    <b>{i[1]}</b>-honadon    status:{i[2]}\n'
+                g.append(a)
+            return ''.join(g)     
+
+    async def list_houses_g(self):
+        with self.connect:
+            res=self.cur.execute('SELECT block,n_house,status FROM `Г-block`' ).fetchall()
+
+            g = []
+            for i in res:
+                a= f'{i[0]}-block    <b>{i[1]}</b>-honadon    status:{i[2]}\n'
+                g.append(a)
+            return ''.join(g)     

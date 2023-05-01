@@ -21,7 +21,13 @@ async def start(msg:types.Message):
         await msg.answer('siz admin emassiz')
 
 
-# @dp.message_handler(Text(equals='uylar ro`yhati'))
+@dp.message_handler(Text(equals='uylar ro`yhati'))
+async def list_houses_func(msg:types.Message):
+    await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=back_kb)
+    await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=back_kb)
+    await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=back_kb)
+    await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=back_kb)
+
 @dp.message_handler(Text(equals='bloklarga o`tish'))
 async def block_choose(msg:types.Message):
     if msg.from_user.id == ID_ADMIN:
@@ -63,7 +69,7 @@ async def block(msg:types.Message,state=FSMContext):
         await msg.answer('Xonadonning raqamini kiriting:',reply_markup=back_kb)
     else:
         await state.finish()
-        await msg.answer('Bunaqa block mavjud emas')
+        await msg.answer('Bunaqa block mavjud emas❌')
         await start(msg)
 @dp.message_handler(state=Block.house)
 async def house(msg:types.Message,state=FSMContext):
@@ -72,7 +78,7 @@ async def house(msg:types.Message,state=FSMContext):
             await msg.answer(await db.info_house(data['block'],msg.text))
             await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇')
         else:
-            await msg.answer(f'{msg.text} raqamli xonadon mavjud emas')
+            await msg.answer(f'{msg.text} raqamli xonadon mavjud emas❌')
             await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇')
 
 @dp.message_handler(state='*',commands=['отмена'])

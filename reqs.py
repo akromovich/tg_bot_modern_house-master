@@ -1,5 +1,21 @@
+import pandas as pd   #  pip install pandas
+import sqlite3
+
+conn = sqlite3.connect('database.db')
+a = pd.read_sql('SELECT * FROM `A-block`', conn)
+b = pd.read_sql('SELECT * FROM `Б-block`', conn)
+v = pd.read_sql('SELECT * FROM `В-block`', conn)
+g = pd.read_sql('SELECT * FROM `Г-block`', conn)
+a.to_excel(f'result-a.xlsx', index=True)
+# b.to_excel(f'result-b.xlsx', index=False)
+# v.to_excel(f'result-v.xlsx', index=False)
+# g.to_excel(f'result-g.xlsx', index=False)
 # import sqlite3
 
+
+
+# con = sqlite3.connect('database.db')
+# cur= con.cursor()
 # # block
 # # pod
 # # floor
@@ -76,8 +92,8 @@
 # j = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 # h= [2,5,8,11,14]
 # l = [16,17,18,19,20,21,22,23,24,25]
-# for i in fg:
-#     cur.execute('UPDATE `Г-block` SET kvm=? WHERE n_house=?',(56.44,i))
+# for i in e:
+#     cur.execute('UPDATE `В-block` SET kvm=? WHERE n_house=?',(53.07,i))
         
 # a = [1,2,3,4,5]
 # for i in a:
