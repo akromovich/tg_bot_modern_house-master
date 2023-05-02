@@ -3,12 +3,17 @@ from aiogram import Dispatcher,types
 from aiogram.dispatcher.filters.state import State,StatesGroup
 from aiogram.dispatcher.storage import FSMContext
 from config import  ID_ADMIN
-from keyboards.kb_admin import kb,back_kb,list_houses
+from keyboards.kb_admin import kb,back_kb,list_houses,status_choose
 from db import DataBase
 from aiogram.dispatcher.filters import Text
 class Block(StatesGroup):
     block = State()
     house = State()
+
+class StatusEdit(StatesGroup):
+    block = 
+    flat = State()
+    status = State()
 
 db = DataBase('database.db')
 
@@ -22,11 +27,26 @@ async def start(msg:types.Message):
 
 
 @dp.message_handler(Text(equals='uylar ro`yhati'))
-async def list_houses_func(msg:types.Message):
-    await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=back_kb)
-    await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=back_kb)
-    await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=back_kb)
-    await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=back_kb)
+async def list_houses_func(msg:types.Message,state=FSMContext):
+    await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=status_choose)
+    await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=status_choose)
+    await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=status_choose)
+    await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=status_choose)
+    await StatesGroup.first()
+    await msg.answer('statusni uzgartirmoqchi bulgan xonadonni tanlang')
+@dp.message_handler(state=StatesGroup.flat)
+async def choose_house(msg:types.Message,state=FSMContext):
+    async with state.proxy() as data:
+        data['house']=msg.text
+    await StatesGroup.next()
+    await msg.answer('statusni tanlang:',reply_markup=status_choose)
+@dp.message_handler(state=StatesGroup.status)
+async def edit_status(msg:types.Message):
+    status_list = ['✅','❌','⚠️']
+    if msg.text in status_list: 
+        async with state.proxy() as data:
+            data['status']=msg.text
+    elif 
 
 @dp.message_handler(Text(equals='bloklarga o`tish'))
 async def block_choose(msg:types.Message):
