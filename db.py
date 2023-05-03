@@ -65,6 +65,8 @@ class DataBase:
                 g.append(a)
             return ''.join(g)     
 
-    async def status_edit(self,block,msg):
+    async def status_edit(self,block,msg,status):
         with self.connect:
-            self.cur.execute(f'UPDATE `{block}` SET status=? WHERE n_house=?',())
+            self.cur.execute(f'UPDATE `{block}-block` SET status=? WHERE n_house=?',(status,msg))
+            return 'status uzgardi'
+            self.connect.commit()
