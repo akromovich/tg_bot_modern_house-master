@@ -61,7 +61,7 @@ class DataBase:
 
             g = []
             for i in res:
-                a= f'__________________________\n<b>{i[0]}</b>-block  |  <b>{i[1]}</b>-honadon  |  status:{i[2]}\n__________________________'
+                a= f'__________________________\n<b>{i[0]}</b>-block  |  <b>{i[1]}</b>-honadon  |  status: {i[2]}\n__________________________'
                 g.append(a)
             return ''.join(g)     
 
@@ -69,4 +69,3 @@ class DataBase:
         with self.connect:
             self.cur.execute(f'UPDATE `{block}-block` SET status=? WHERE n_house=?',(status,msg))
             return 'status uzgardi'
-            self.connect.commit()
