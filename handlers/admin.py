@@ -17,10 +17,19 @@ class StatusEdit(StatesGroup):
     flat = State()
     status = State()
 
+class ChooseBlock(StatesGroup):
+    block= State()
+
 db = DataBase('database.db')
 
 status_list = ['✅','❌','⚠️']
 
+@dp.message_handler(state="*",commands=['orqaga'])
+@dp.message_handler(Text(equals='orqaga',ignore_case=True),state="*")
+async def orqaga_func(message:types.Message,state:FSMContext):
+    await state.finish()
+    await start(message)
+    
 @dp.message_handler(commands=['start'])
 async def start(msg:types.Message):
     if msg.from_user.id == ID_ADMIN:
@@ -30,16 +39,33 @@ async def start(msg:types.Message):
 
 
 @dp.message_handler(Text(equals='status o`zgartirish va uylar ro`yhati'))
-async def list_houses_edit_status_func(msg:types.Message,state=FSMContext):
-    await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=list_houses_kb)
-    await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=list_houses_kb)
-    await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=list_houses_kb)
-    await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=list_houses_kb)
+async def list_houses_edit_status_func(msg:types.Message,state:FSMContext):
+    # await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=list_houses_kb)
+    # await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=list_houses_kb)
+    # await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=list_houses_kb)
+    # await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=list_houses_kb)
+    await msg.answer('text',reply_markup=list_houses_kb)
 
 @dp.message_handler(Text(equals='uylar ro`yhati'))
 async def list_houses_func(msg:types.Message):
-    await msg.answer('👇uylar ro`yhati yoki uylarning statusini uzgartirish uchun pastdagi tugmalarni bosing👇',reply_markup=list_houses_kb)
+    await ChooseBlock.first()
+    await msg.answer('👇tugmani bosing👇',reply_markup=kb)
 
+@dp.message_handler(state=ChooseBlock.block)
+async def choose_block(msg:types.Message,state:FSMContext):
+    if msg.text=='A':
+        await msg.answer(await db.list_houses_a(),parse_mode='HTML',reply_markup=list_houses_kb)
+        await state.finish()
+    elif msg.text=='Б':
+        await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=list_houses_kb)
+        await state.finish()
+    elif msg.text=='В':
+        await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=list_houses_kb)
+        await state.finish()
+    elif msg.text=='Г':
+        await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=list_houses_kb)
+        await state.finish()
+    
 
 @dp.message_handler(Text('statusni almashtirish'))
 async def edit_status(msg:types.Message):
@@ -50,21 +76,21 @@ async def edit_status(msg:types.Message):
         await msg.answer('siz admin emassiz')
 
 @dp.message_handler(state=StatusEdit.block)
-async def statusedit_load(msg:types.Message,state=FSMContext):
+async def statusedit_load(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
         data['block']=msg.text
     await StatusEdit.next()
     await msg.answer('statusni almashtirish uchun honadon raqamini kiriting: ')
 
 @dp.message_handler(state=StatusEdit.flat)
-async def statusedit_load_house(msg:types.Message,state=FSMContext):
+async def statusedit_load_house(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
         data['house']=msg.text
     await StatusEdit.next()
     await msg.answer('statusni almashtirish uchun statusni tanlang: ',reply_markup=status_choose)    
 
 @dp.message_handler(state=StatusEdit.status)
-async def statusedit_load_status(msg:types.Message,state=FSMContext):
+async def statusedit_load_status(msg:types.Message,state:FSMContext):
     if msg.text in status_list:
         async with state.proxy() as data:
             data['status']=msg.text
@@ -84,17 +110,9 @@ async def block_choose(msg:types.Message):
     else:
         await msg.answer('siz admin emassiz')
 
-@dp.message_handler(state='*',commands=['orqaga'])
-@dp.message_handler(Text(equals='orqaga',ignore_case=True),state='*')
-async def orqaga_func(message:types.Message,state=FSMContext):
-    current = await state.get_state()
-    if current is None:
-        await start(message)
-    else:
-        await state.finish()
-        await start(message)
+
 @dp.message_handler(state=Block.block)
-async def block(msg:types.Message,state=FSMContext):
+async def block(msg:types.Message,state:FSMContext):
     global block_data
     global house_data
     block_data= None
@@ -128,7 +146,7 @@ async def block(msg:types.Message,state=FSMContext):
         await msg.answer('Bunaqa block mavjud emas❌')
         await start(msg)
 @dp.message_handler(state=Block.house)
-async def house(msg:types.Message,state=FSMContext):
+async def house(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
         if await db.check_house(data['block'],msg.text):
             await msg.answer(await db.info_house(data['block'],msg.text),reply_markup=back_kb)
@@ -142,15 +160,12 @@ async def house(msg:types.Message,state=FSMContext):
 
 @dp.message_handler(state='*',commands=['отмена'])
 @dp.message_handler(Text(equals='отмена',ignore_case=True),state='*')
-async def cancel_state(message:types.Message,state=FSMContext):
-    current = await state.get_state()
-    if current is None:
-        return
-    else:
-        await state.finish()
-        await message.answer('операция отменена')
+async def cancel_state(message:types.Message,state:FSMContext):
+    await state.finish()
+    await message.answer('операция отменена')
 
 def register_handlers_admin(dp:Dispatcher):
     dp.register_message_handler(start,commands=['start'])
+    
 
 
