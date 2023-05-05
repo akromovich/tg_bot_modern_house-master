@@ -69,3 +69,8 @@ class DataBase:
         with self.connect:
             self.cur.execute(f'UPDATE `{block}-block` SET status=? WHERE n_house=?',(status,msg))
             return 'status uzgardi'
+
+    async def excel_file(self,block):
+        with self.connect:
+            a = pd.read_sql(f'SELECT * FROM `{block}-block`')
+            a.to_excel(f'result.xlsx', index=True)

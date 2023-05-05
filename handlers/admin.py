@@ -20,9 +20,24 @@ class StatusEdit(StatesGroup):
 class ChooseBlock(StatesGroup):
     block= State()
 
+class Excel(StatesGroup):
+    block = State()
+
+
 db = DataBase('database.db')
 
 status_list = ['✅','❌','⚠️']
+
+@dp.message_handler(Text(equals='excel file olish'))
+async def excel_get(msg:types.Message):
+    await msg.answer('blockni tanlang: ',reply_markup=kb)
+    await Excel.first()
+
+@dp.message_handler(state=Excel.block)
+async def excel_send(msg:types.Message,state:FSMContext):
+    await msg.answer('mana',reply_markup=list_houses_kb)
+    await state.finish()
+
 
 @dp.message_handler(state="*",commands=['orqaga'])
 @dp.message_handler(Text(equals='orqaga',ignore_case=True),state="*")
@@ -44,7 +59,7 @@ async def list_houses_edit_status_func(msg:types.Message,state:FSMContext):
     # await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=list_houses_kb)
     # await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=list_houses_kb)
     # await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=list_houses_kb)
-    await msg.answer('text',reply_markup=list_houses_kb)
+    await msg.answer('👇tugmani tanlang👇',reply_markup=list_houses_kb)
 
 @dp.message_handler(Text(equals='uylar ro`yhati'))
 async def list_houses_func(msg:types.Message):
@@ -95,7 +110,7 @@ async def statusedit_load_status(msg:types.Message,state:FSMContext):
         async with state.proxy() as data:
             data['status']=msg.text
             await msg.answer(data)
-            await db.status_edit(data['block'], data['house'], data['status'])
+            await db.status_edit(await db.info_house(data['block'], data['house']))
             await state.finish()
     else:
         await msg.answer(f'mavjud bo`lmagan {msg.text} status kiritildi')
