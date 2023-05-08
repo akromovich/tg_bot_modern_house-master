@@ -3,7 +3,7 @@ from aiogram import Dispatcher,types
 from aiogram.dispatcher.filters.state import State,StatesGroup
 from aiogram.dispatcher.storage import FSMContext
 from config import  ID_ADMIN
-from keyboards.kb_admin import kb,back_kb,list_houses,status_choose,list_houses_kb
+from keyboards.kb_admin import kb,back_kb,list_houses,status_choose,list_houses_kb,excel_kb
 from db import DataBase
 from aiogram.dispatcher.filters import Text
 class Block(StatesGroup):
@@ -27,10 +27,9 @@ class Excel(StatesGroup):
 db = DataBase('database.db')
 
 status_list = ['✅','❌','⚠️']
-
 @dp.message_handler(Text(equals='excel file olish'))
 async def excel_get(msg:types.Message):
-    await msg.answer('blockni tanlang: ',reply_markup=kb)
+    await msg.answer('blockni tanlang: ',reply_markup=excel_kb)
     await Excel.first()
 
 @dp.message_handler(state=Excel.block)
@@ -109,8 +108,8 @@ async def statusedit_load_status(msg:types.Message,state:FSMContext):
     if msg.text in status_list:
         async with state.proxy() as data:
             data['status']=msg.text
-            await msg.answer(data)
-            await db.status_edit(await db.info_house(data['block'], data['house']))
+            await db.status_edit(data['block'],data['house'],data['status'])
+            await msg.answer(await db.info_house(data['block'],data['house']))
             await state.finish()
     else:
         await msg.answer(f'mavjud bo`lmagan {msg.text} status kiritildi')
@@ -164,7 +163,9 @@ async def block(msg:types.Message,state:FSMContext):
 async def house(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
         if await db.check_house(data['block'],msg.text):
-            await msg.answer(await db.info_house(data['block'],msg.text),reply_markup=back_kb)
+            for i in await db.info_house(data['block'],msg.text):
+                await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+            # f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n '
             house_data=msg.text
             await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇',reply_markup=back_kb)
         else:

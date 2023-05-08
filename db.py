@@ -19,12 +19,13 @@ class DataBase:
     async def info_house(self,block,n_house):
         with self.connect:
             res =self.cur.execute(f'SELECT block,pod,floor,n_house,quantity_r,kvm,price,status FROM `{block}-block` WHERE n_house=?',(n_house,)).fetchall()
-            g = []
-            for i in res:
-                a= f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n '
-                g.append(a)
-            return ''.join(g)
-
+            # g = []
+            # for i in res:
+            #     a= f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n '
+            #     g.append(a)
+            # return ''.join(g)
+            return res
+            
     async def list_houses_a(self):
         with self.connect:
             res=self.cur.execute('SELECT block,n_house,status FROM `A-block`' ).fetchall()
