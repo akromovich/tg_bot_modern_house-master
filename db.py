@@ -1,4 +1,4 @@
-
+import pandas as pd
 import sqlite3
 from aiogram.dispatcher import FSMContext
 class DataBase:
@@ -73,5 +73,5 @@ class DataBase:
 
     async def excel_file(self,block):
         with self.connect:
-            a = pd.read_sql(f'SELECT * FROM `{block}-block`')
+            a = pd.read_sql(f'SELECT * FROM `{block}-block`',self.connect)
             a.to_excel(f'result.xlsx', index=True)

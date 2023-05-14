@@ -34,7 +34,16 @@ async def excel_get(msg:types.Message):
 
 @dp.message_handler(state=Excel.block)
 async def excel_send(msg:types.Message,state:FSMContext):
-    await msg.answer('mana',reply_markup=list_houses_kb)
+    if msg.text == 'A':
+        await db.excel_file(msg.text)
+        await bot.send_file(msg.chat.id, 'result.xlsx')
+        await msg.answer('mana A',reply_markup=list_houses_kb)
+    elif msg.text == 'Б':
+        await msg.answer('mana Б',reply_markup=list_houses_kb)
+    elif msg.text == 'В':
+        await msg.answer('mana В',reply_markup=list_houses_kb)
+    elif msg.text == 'Г':
+        await msg.answer('mana Г',reply_markup=list_houses_kb)
     await state.finish()
 
 
