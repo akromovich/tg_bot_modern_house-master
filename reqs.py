@@ -1,4 +1,4 @@
-import pandas as pd   #  pip install pandas
+# import pandas as pd   #  pip install pandas
 import sqlite3
 
 conn = sqlite3.connect('database.db')
