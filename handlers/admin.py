@@ -108,17 +108,22 @@ async def statusedit_load(msg:types.Message,state:FSMContext):
 @dp.message_handler(state=StatusEdit.flat)
 async def statusedit_load_house(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
-        data['house']=msg.text
-    await StatusEdit.next()
-    await msg.answer('statusni almashtirish uchun statusni tanlang: ',reply_markup=status_choose)    
+        if await db.check_house(data['block'],msg.text):
+            data['house']=msg.text
+            await StatusEdit.next()
+            await msg.answer('statusni almashtirish uchun statusni tanlang: ',reply_markup=status_choose)    
+        else:
+            await msg.answer(f'{msg.text} raqamli xonadon mavjud emas❌')
+            await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇')
+
 
 @dp.message_handler(state=StatusEdit.status)
 async def statusedit_load_status(msg:types.Message,state:FSMContext):
     if msg.text in status_list:
         async with state.proxy() as data:
             data['status']=msg.text
-            await db.status_edit(data['block'],data['house'],data['status'])
-            await msg.answer(await db.info_house(data['block'],data['house']))
+            await msg.answer(await db.status_edit(data['block'],data['house'],data['status']))
+            await start(msg)
             await state.finish()
     else:
         await msg.answer(f'mavjud bo`lmagan {msg.text} status kiritildi')
@@ -173,10 +178,49 @@ async def house(msg:types.Message,state:FSMContext):
     async with state.proxy() as data:
         if await db.check_house(data['block'],msg.text):
             for i in await db.info_house(data['block'],msg.text):
-                await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                if i[5]==43.93:
+                    res = open('media/43.93.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==53.07:
+                    res = open('media/53.07.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==56.43:
+                    res = open('media/56.43.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==56.82:
+                    res = open('media/56.82.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==58.45:
+                    res = open('media/58.45.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==62.20:
+                    res = open('media/62.20.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==65.41:
+                    res = open('media/65.41.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==70.14:
+                    res = open('media/70.14.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==70.96:
+                    res = open('media/70.96.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
+                elif i[5]==73.60:
+                    res = open('media/73.60.jpg', 'rb')
+                    await bot.send_photo(msg.chat.id,res)
+                    await msg.answer(f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n ',reply_markup=back_kb)
             # f'{i[0]}-blok\n{i[1]}-podezd\n{i[2]}-qavat\n{i[3]}-honadon\n{i[4]} xonali\n{i[5]} kv.m\n{i[6]}-kv.m narxi\nstatus:{i[7]}\n '
-            house_data=msg.text
-            await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇',reply_markup=back_kb)
+                house_data=msg.text
+                await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇',reply_markup=back_kb)
         else:
             await msg.answer(f'{msg.text} raqamli xonadon mavjud emas❌')
             await msg.answer('xonadon raqamini kiriting \nagar orqaga qaytmoqchi bulsangiz pastdagi tugmani bosing👇')
