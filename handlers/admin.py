@@ -6,6 +6,14 @@ from config import  ID_ADMIN
 from keyboards.kb_admin import kb,back_kb,list_houses,status_choose,list_houses_kb,excel_kb
 from db import DataBase
 from aiogram.dispatcher.filters import Text
+import pandas as pd   #  pip install pandas
+import sqlite3
+import time
+conn = sqlite3.connect('database.db')
+a = pd.read_sql('SELECT * FROM `A-block`', conn)
+b = pd.read_sql('SELECT * FROM `Б-block`', conn)
+v = pd.read_sql('SELECT * FROM `В-block`', conn)
+g = pd.read_sql('SELECT * FROM `Г-block`', conn)
 class Block(StatesGroup):
     block = State()
     house = State()
@@ -35,15 +43,41 @@ async def excel_get(msg:types.Message):
 @dp.message_handler(state=Excel.block)
 async def excel_send(msg:types.Message,state:FSMContext):
     if msg.text == 'A':
-        await db.excel_file(msg.text)
-        await bot.send_file(msg.chat.id, 'result.xlsx')
+        a = pd.read_sql('SELECT * FROM `A-block`', conn)
+        a.to_excel(f'result_a_block.xlsx', index=True)
+        file_xlsx = open('result_a_block.xlsx','rb')
+        await bot.send_document(msg.chat.id, file_xlsx)
         await msg.answer('mana A',reply_markup=list_houses_kb)
     elif msg.text == 'Б':
+        b = pd.read_sql('SELECT * FROM `Б-block`', conn)
+        b.to_excel(f'result_b_block.xlsx', index=True)
+        file_xlsx = open('result_b_block.xlsx','rb')
+        await bot.send_document(msg.chat.id, file_xlsx)
         await msg.answer('mana Б',reply_markup=list_houses_kb)
     elif msg.text == 'В':
+        v = pd.read_sql('SELECT * FROM `В-block`', conn)
+        v.to_excel(f'result_v_block.xlsx', index=True)
+        file_xlsx = open('result_v_block.xlsx','rb')
+        await bot.send_document(msg.chat.id, file_xlsx)
         await msg.answer('mana В',reply_markup=list_houses_kb)
     elif msg.text == 'Г':
+        g = pd.read_sql('SELECT * FROM `Г-block`', conn)
+        g.to_excel(f'result_g_block.xlsx', index=True)
+        file_xlsx = open('result_g_block.xlsx','rb')
+        await bot.send_document(msg.chat.id, file_xlsx)
         await msg.answer('mana Г',reply_markup=list_houses_kb)
+    elif msg.text == 'общий excel':
+        a = pd.read_sql('SELECT * FROM `A-block`', conn)
+        b = pd.read_sql('SELECT * FROM `Б-block`', conn)
+        v = pd.read_sql('SELECT * FROM `В-block`', conn)
+        g = pd.read_sql('SELECT * FROM `Г-block`', conn)
+        with pd.ExcelWriter('output.xlsx') as writer:  
+            a.to_excel(writer, sheet_name='А-block')
+            b.to_excel(writer, sheet_name='Б-block')
+            v.to_excel(writer, sheet_name='В-block')
+            g.to_excel(writer, sheet_name='Г-block')
+        file_xlsx = open('output.xlsx','rb')
+        await bot.send_document(msg.chat.id, file_xlsx)
     await state.finish()
 
 
