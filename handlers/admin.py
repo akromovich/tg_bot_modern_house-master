@@ -38,15 +38,18 @@ status_list = ['✅','❌','⚠️']
 try:
     @dp.message_handler(commands=['start'])
     async def start(msg:types.Message):
-        if msg.from_user.id == ID_ADMIN:
+        if msg.from_user.id in ID_ADMIN:
             await msg.answer('👇tugmani bosing👇',reply_markup=list_houses)
         else:
             await msg.answer('siz admin emassiz')
     
     @dp.message_handler(Text(equals='excel file olish'))
     async def excel_get(msg:types.Message):
-        await msg.answer('blockni tanlang: ',reply_markup=excel_kb)
-        await Excel.first()
+        if msg.from_user.id in ID_ADMIN:
+            await msg.answer('blockni tanlang: ',reply_markup=excel_kb)
+            await Excel.first()
+        else:
+            await msg.answer('siz admin emassiz')
 
     @dp.message_handler(state=Excel.block)
     async def excel_send(msg:types.Message,state:FSMContext):
@@ -87,9 +90,12 @@ try:
 
     @dp.message_handler(state="*",commands=['orqaga'])
     @dp.message_handler(Text(equals='orqaga',ignore_case=True),state="*")
-    async def orqaga_func(message:types.Message,state:FSMContext):
-        await state.finish()
-        await start(message)
+    async def orqaga_func(msg:types.Message,state:FSMContext):
+        if msg.from_user.id in ID_ADMIN:
+            await state.finish()
+            await start(message)
+        else:
+            await msg.answer('siz admin emassiz')
         
 
 
@@ -99,12 +105,18 @@ try:
         # await msg.answer(await db.list_houses_b(),parse_mode='HTML',reply_markup=list_houses_kb)
         # await msg.answer(await db.list_houses_v(),parse_mode='HTML',reply_markup=list_houses_kb)
         # await msg.answer(await db.list_houses_g(),parse_mode='HTML',reply_markup=list_houses_kb)
-        await msg.answer('👇tugmani tanlang👇',reply_markup=list_houses_kb)
+        if msg.from_user.id in ID_ADMIN:
+            await msg.answer('👇tugmani tanlang👇',reply_markup=list_houses_kb)
+        else:
+            await msg.answer('siz admin emassiz')
 
     @dp.message_handler(Text(equals='uylar ro`yhati'))
     async def list_houses_func(msg:types.Message):
-        await ChooseBlock.first()
-        await msg.answer('👇tugmani bosing👇',reply_markup=kb)
+        if msg.from_user.id in ID_ADMIN:    
+            await ChooseBlock.first()
+            await msg.answer('👇tugmani bosing👇',reply_markup=kb)
+        else:
+            await msg.answer('siz admin emassiz')
 
     @dp.message_handler(state=ChooseBlock.block)
     async def choose_block(msg:types.Message,state:FSMContext):
@@ -124,7 +136,7 @@ try:
 
     @dp.message_handler(Text('statusni almashtirish'))
     async def edit_status(msg:types.Message):
-        if msg.from_user.id == ID_ADMIN:
+        if msg.from_user.id in ID_ADMIN:
             await msg.answer('statusni amashtirish uchun blokni tanlang',reply_markup=kb)
             await StatusEdit.first()
         else:
@@ -164,7 +176,7 @@ try:
 
     @dp.message_handler(Text(equals='bloklarga o`tish'))
     async def block_choose(msg:types.Message):
-        if msg.from_user.id == ID_ADMIN:
+        if msg.from_user.id in ID_ADMIN:
             await msg.answer('👇blokni tanlang👇',reply_markup=kb)
             await Block.first()
         else:
@@ -262,10 +274,13 @@ try:
     @dp.message_handler(state='*',commands=['отмена'])
     @dp.message_handler(Text(equals='отмена',ignore_case=True),state='*')
     async def cancel_state(message:types.Message,state:FSMContext):
-        await state.finish()
-        await message.answer('операция отменена')
+        if message.from_user.id in ID_ADMIN:    
+            await state.finish()
+            await message.answer('операция отменена')
+        else:
+            await message.answer('siz admin emassiz')
+
 except:
-    @dp.message_handler()
     async def oshibka(msg:types.Message):
         await msg.answer('/start ni bosing')
 def register_handlers_admin(dp:Dispatcher):
