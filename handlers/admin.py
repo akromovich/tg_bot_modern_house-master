@@ -93,7 +93,7 @@ try:
     async def orqaga_func(msg:types.Message,state:FSMContext):
         if msg.from_user.id in ID_ADMIN:
             await state.finish()
-            await start(message)
+            await start(msg)
         else:
             await msg.answer('siz admin emassiz')
         
